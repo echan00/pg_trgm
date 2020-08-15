@@ -28,12 +28,14 @@ module PgTrgm
   end
   
   def self.sim_ngram(str1, str2, n = 3)
+    return 0.to_f if str1.blank? || str2.blank?
+    
     # 空白文字(半角スペース、改行、復帰、改ページ、水平タブ)は除去
     strings = [str1.gsub(/\s+/, ""), str2.gsub(/\s+/, "")]
     lengths = strings.map { |s| s.split(//).size }
     # 文字列の文字数が N より少なければ例外スロー
-    raise "Length of a str1 string is shorter than N(=#{n})" if lengths[0] < n
-    raise "Length of a str2 string is shorter than N(=#{n})" if lengths[1] < n
+    
+    n = [lengths[0], lengths[1], n].min
 
     # N 文字ずつ分割
     arrays = strings.map { |s| s.chars.each_cons(n).collect(&:join) }
